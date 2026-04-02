@@ -30,7 +30,7 @@ public class Pedido {
     private BigDecimal valorTotal;
 
     @OneToMany(mappedBy = "pedido",
-    cascade =  CascadeType.PERSIST, orphanRemoval = true)
+    cascade =  CascadeType.ALL, orphanRemoval = true)
     private List<ItemDoPedido> itens = new ArrayList<>();
 
     public void calcularValorTotalDoPedido(){
