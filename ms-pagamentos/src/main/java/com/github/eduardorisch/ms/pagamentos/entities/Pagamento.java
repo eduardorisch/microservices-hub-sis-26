@@ -20,8 +20,10 @@ public class Pagamento {
     private BigDecimal val;
     @Column(nullable = false)
     private String nome;
-    @Column(nullable = false, length = 16)
+
+//    @Column(nullable = false, length = 16)
     private String nCartao;
+
     @Column(nullable = false, length = 5)
     private String validade;
     @Column(nullable = false, length = 3)
