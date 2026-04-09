@@ -5,6 +5,7 @@ import com.github.eduardorisch.ms.pagamentos.entities.Pagamento;
 import com.github.eduardorisch.ms.pagamentos.entities.Status;
 import com.github.eduardorisch.ms.pagamentos.exceptions.ResourceNotFoundException;
 import com.github.eduardorisch.ms.pagamentos.repository.PagamentoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,12 +42,33 @@ public class PagamentoService {
         return new PagamentoDTO(pagamento);
     }
 
+    @Transactional
+    public PagamentoDTO updatePagamento (PagamentoDTO dto, Long id){
+        try{
+            Pagamento pagamento = repository.getReferenceById(id);
+            mapperDtoToPagamento(dto, pagamento);
+            pagamento.setStatus(dto.getStatus());
+            pagamento = repository.save(pagamento);
+            return new PagamentoDTO(pagamento);
+        } catch (EntityNotFoundException e){
+            throw new ResourceNotFoundException("Recurso n encontrado. ID " + id);
+        }
+    }
+
+    @Transactional
+    public void deletePagamentoById(Long id){
+        if (!repository.existsById(id)){
+            throw new ResourceNotFoundException("Recurso n encontrado. id " + id);
+        }
+        repository.deleteById(id);
+    }
+
     private void mapperDtoToPagamento(PagamentoDTO dto, Pagamento pag){
         pag.setCodSeg(dto.getCodSeg());
         pag.setNome(dto.getNome());
         pag.setVal(dto.getVal());
 
-        pag.setNCartao(dto.getNCartao());
+        pag.setNumCartao(dto.getNumCartao());
 
         pag.setPedidoId(dto.getPedidoId());
         pag.setValidade(dto.getValidade());

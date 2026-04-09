@@ -73,7 +73,7 @@ public class PagamentoDTO {
 
     @NotBlank(message = "O campo é requirido")
     @Size(min = 16, max = 16, message = "O campo deve ter 16 caractreres")
-    private String nCartao;
+    private String numCartao;
 
     @NotBlank(message = "O campo é requirido")
     @Size(min = 5, max = 5, message = "O campo deve ter 5 caractreres")
@@ -92,7 +92,7 @@ public class PagamentoDTO {
         id = pag.getId();
         val = pag.getVal();
         nome = pag.getNome();
-        nCartao = pag.getNCartao();
+        numCartao = pag.getNumCartao();
         validade = pag.getValidade();
         codSeg = pag.getCodSeg();
         status = pag.getStatus();

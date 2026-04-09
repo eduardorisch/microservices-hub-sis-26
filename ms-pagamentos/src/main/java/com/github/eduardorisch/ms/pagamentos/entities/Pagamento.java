@@ -21,8 +21,8 @@ public class Pagamento {
     @Column(nullable = false)
     private String nome;
 
-//    @Column(nullable = false, length = 16)
-    private String nCartao;
+    @Column(nullable = false, length = 16)
+    private String numCartao;
 
     @Column(nullable = false, length = 5)
     private String validade;
