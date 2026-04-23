@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @WebMvcTest(PagamentoController.class)
-public class pagamentoControllerTest {
+public class PagamentoControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -192,7 +192,7 @@ public class pagamentoControllerTest {
         Mockito.when(service.updatePagamento(any(PagamentoDTO.class), eq(nonExistingId)))
                 .thenThrow(new ResourceNotFoundException("Recurso não encontrado. ID: " + nonExistingId));
 
-        mockMvc.perform(put("pagamentos/{id}", nonExistingId)
+        mockMvc.perform(put("/pagamentos/{id}", nonExistingId)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonRequestBody))
