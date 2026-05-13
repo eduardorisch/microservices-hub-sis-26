@@ -1,0 +1,2 @@
+insert into tb_pagamento(val, nome, num_cartao, validade, cod_Seg, status, pedido_Id) values(2000, 'Alberto','6895426578961254', '12/30', '123', 'CRIADO', 1);
+insert into tb_pagamento(val, nome, num_cartao, validade, cod_Seg, status, pedido_Id) values(3000, 'Joao','1111111111111111', '11/29', '456', 'CRIADO', 2);
