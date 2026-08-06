@@ -5,6 +5,7 @@ import com.github.eduardorisch.ms_pedidos.dtos.PedidoDTO;
 import com.github.eduardorisch.ms_pedidos.entities.ItemDoPedido;
 import com.github.eduardorisch.ms_pedidos.entities.Pedido;
 import com.github.eduardorisch.ms_pedidos.entities.Status;
+import com.github.eduardorisch.ms_pedidos.exceptions.PedidoPagoException;
 import com.github.eduardorisch.ms_pedidos.exceptions.ResourceNotFoundException;
 import com.github.eduardorisch.ms_pedidos.repositories.ItemDoPedidoRepository;
 import com.github.eduardorisch.ms_pedidos.repositories.PedidoRepository;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PedidoService {
@@ -54,6 +56,9 @@ public class PedidoService {
     public PedidoDTO updatePedido(Long id, PedidoDTO dto){
         try {
             Pedido pedido = pRepository.getReferenceById(id);
+            if (pedido.getStatus().equals(Status.PAGO)){
+                throw new PedidoPagoException(String.format("Pedido id: %d já esta PAGO e não pode ser alterado", id));
+            }
             pedido.getItens().clear();
             pedido.setData(LocalDate.now());
             pedido.setStatus(Status.CRIADO);
@@ -73,6 +78,15 @@ public class PedidoService {
         }
 
         pRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void confirmarPagamento(Long id){
+        Optional<Pedido> pedido = pRepository.findById(id);
+
+        if (pedido.isEmpty()){
+            throw new ResourceNotFoundException("Pedido n encontrado. ID" +id);
+        }
     }
 
     private void mapDtoToPedido(PedidoDTO dto, Pedido pedido){
