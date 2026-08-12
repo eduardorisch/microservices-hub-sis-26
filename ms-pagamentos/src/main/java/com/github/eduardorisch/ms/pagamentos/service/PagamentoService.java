@@ -3,8 +3,10 @@ package com.github.eduardorisch.ms.pagamentos.service;
 import com.github.eduardorisch.ms.pagamentos.dto.PagamentoDTO;
 import com.github.eduardorisch.ms.pagamentos.entities.Pagamento;
 import com.github.eduardorisch.ms.pagamentos.entities.Status;
+import com.github.eduardorisch.ms.pagamentos.exceptions.PagamentoAprovadoException;
 import com.github.eduardorisch.ms.pagamentos.exceptions.ResourceNotFoundException;
 import com.github.eduardorisch.ms.pagamentos.repository.PagamentoRepository;
+import com.github.eduardorisch.ms.pagamentos.repository.PedidoClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class PagamentoService {
 
     @Autowired
     private PagamentoRepository repository;
+
+    @Autowired
+    private PedidoClient client;
 
     @Transactional(readOnly = true)
     public List<PagamentoDTO> findAllPagamentos() {
@@ -46,6 +51,11 @@ public class PagamentoService {
     public PagamentoDTO updatePagamento (PagamentoDTO dto, Long id){
         try{
             Pagamento pagamento = repository.getReferenceById(id);
+            if (pagamento.getStatus().equals(Status.APROVADO)) {
+                throw new PagamentoAprovadoException(
+                        String.format("Pagamento id %d já está APROVADO e não pode ser alterado", id)
+                );
+            }
             mapperDtoToPagamento(dto, pagamento);
             pagamento.setStatus(dto.getStatus());
             pagamento = repository.save(pagamento);
@@ -61,6 +71,18 @@ public class PagamentoService {
             throw new ResourceNotFoundException("Recurso n encontrado. id " + id);
         }
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public PagamentoDTO confirmarPagamentoDoPedido(Long id){
+        Pagamento pagamento = repository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Pagamento n encontrado. ID " + id)
+        );
+
+        pagamento.setStatus(Status.APROVADO);
+        repository.save(pagamento);
+        client.confirmarPagamento(pagamento.getId());
+        return new PagamentoDTO(pagamento);
     }
 
     private void mapperDtoToPagamento(PagamentoDTO dto, Pagamento pag){

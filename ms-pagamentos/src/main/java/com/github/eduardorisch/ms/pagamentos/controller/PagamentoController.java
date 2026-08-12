@@ -3,6 +3,7 @@ package com.github.eduardorisch.ms.pagamentos.controller;
 import com.github.eduardorisch.ms.pagamentos.dto.PagamentoDTO;
 import com.github.eduardorisch.ms.pagamentos.service.PagamentoService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,5 +57,11 @@ public class PagamentoController {
         service.deletePagamentoById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/confirmar")
+    private ResponseEntity<PagamentoDTO> confirmarPagamentoDoPedido(@PathVariable @NotNull Long id){
+        PagamentoDTO dto = service.confirmarPagamentoDoPedido(id);
+        return ResponseEntity.ok(dto);
     }
 }

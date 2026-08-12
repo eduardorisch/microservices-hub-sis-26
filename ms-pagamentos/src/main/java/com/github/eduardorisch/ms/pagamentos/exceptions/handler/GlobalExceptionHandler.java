@@ -1,6 +1,7 @@
 package com.github.eduardorisch.ms.pagamentos.exceptions.handler;
 
 import com.github.eduardorisch.ms.pagamentos.exceptions.DatabaseException;
+import com.github.eduardorisch.ms.pagamentos.exceptions.PedidoPagoException;
 import com.github.eduardorisch.ms.pagamentos.exceptions.ResourceNotFoundException;
 import com.github.eduardorisch.ms.pagamentos.exceptions.dto.CustomErrorDTO;
 import com.github.eduardorisch.ms.pagamentos.exceptions.dto.ValidationErrorDTO;
@@ -75,6 +76,18 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(err);
     }
+
+    @ExceptionHandler(PedidoPagoException.class)
+    public ResponseEntity<CustomErrorDTO> handlePedidoPago(PedidoPagoException e,
+                                                           HttpServletRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+        CustomErrorDTO err = new CustomErrorDTO(Instant.now(), status.value(),
+                e.getMessage(), request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+
 
     // 500 - fallback para qualquer erro não tratado
 //    @ExceptionHandler(Exception.class)

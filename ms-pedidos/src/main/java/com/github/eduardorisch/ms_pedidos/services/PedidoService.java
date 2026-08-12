@@ -82,11 +82,15 @@ public class PedidoService {
 
     @Transactional
     public void confirmarPagamento(Long id){
+
         Optional<Pedido> pedido = pRepository.findById(id);
 
         if (pedido.isEmpty()){
-            throw new ResourceNotFoundException("Pedido n encontrado. ID" +id);
+            throw new  ResourceNotFoundException("Pedido não encontrado. ID: " + id);
         }
+
+        pedido.get().setStatus(Status.PAGO);
+        pRepository.save(pedido.get());
     }
 
     private void mapDtoToPedido(PedidoDTO dto, Pedido pedido){
